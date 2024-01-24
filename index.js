@@ -1,20 +1,38 @@
 const express = require('express');
+const path = require('path');
 const {connection} = require('./connect');
-const urlroute = require('./routes/url');
+
+
 const url = require('./models/url')
+const urlroute = require('./routes/url');
+const staticRoute = require('./routes/staticRouter');
+const userRoute = require('./routes/routeForAuth');
+
+
+
+
 const app = express();
 const PORT = 8001;
-const staticRoute = require('./routes/staticRouter');
-const path = require('path');
-const exp = require('constants');
-app.set("view engine",'ejs');
-app.set("views",path.resolve("./view"))
+
+
+
 connection('mongodb://localhost:27017/shorturl')
 .then(()=>console.log('mongodb connected'))
 
+
+
+app.set("view engine",'ejs');
+app.set("views",path.resolve("./view"))
+
+
 app.use(express.json());
-app.use(express.urlencoded({extended:false}))
+app.use(express.urlencoded({extended:false}));
+
+
 app.use('/url',urlroute);
+app.use('/user',userRoute);
+app.use('/',staticRoute);
+
 app.get('/:shortId',async(req,res)=>{
     const shortId = req.params.shortId;
     try{
@@ -38,7 +56,6 @@ console.log(error);
 res.status(500).send('internal error');
 }
 });
-app.use('/',staticRoute);
 
 app.listen(PORT,()=>console.log(`server created at ${PORT}`));
 
