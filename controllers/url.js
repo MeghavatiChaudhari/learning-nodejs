@@ -13,8 +13,10 @@ async function handlegenerateshorturl(req,res){
         Redirectedurl:body.url,
         visitHistroy:[],
      });
-
-     return res.json({id:shortID});
+      return res.render('home',{
+        id:shortID,
+      });
+    //  return res.json({id:shortID});
 };
 
 module.exports={
